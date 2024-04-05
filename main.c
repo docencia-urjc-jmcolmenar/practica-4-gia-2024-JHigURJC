@@ -28,7 +28,7 @@ typedef struct {
 } tipoAgenda;
 
 // Función para creación de la agenda
-tipoAgenda creaAgenda();
+void creaAgenda();
 
 // Función para imprimir el tipo de contacto
 char *imprimeTipoContacto(enum tipoContacto);
@@ -38,7 +38,7 @@ void listadoContactos(tipoAgenda);
 
 int main() {
 
-    tipoAgenda agenda = creaAgenda();
+  creaAgenda();
 
     // Menu principal
     int opcion;
@@ -58,7 +58,7 @@ int main() {
 
         switch (opcion) {
             case 1:
-                listadoContactos(agenda);
+               // listadoContactos(agenda);
                 break;
             case 2:
                 // Por completar
@@ -80,12 +80,10 @@ int main() {
         }
     } while (opcion != 0);
 
-    // Liberación de memoria antes de terminar
-    free(agenda.personas);
 }
 
 
-tipoAgenda creaAgenda() {
+void creaAgenda() {
     // Creación de agenda
     tipoAgenda agenda;
 
@@ -96,7 +94,6 @@ tipoAgenda creaAgenda() {
     if (agenda.personas == NULL) {
         printf("No hay memoria.");
         agenda.numPersonas = -1;
-        return agenda;
     }
 
     // Adición de una persona (hay que implementar la opción 2 del menu principal(
@@ -106,7 +103,21 @@ tipoAgenda creaAgenda() {
     agenda.personas[0].tipo = CONOCIDO;
     agenda.numPersonas++;
 
-    return agenda;
+
+
+    FILE *file;
+    file = fopen("agenda.dat", "wb");
+    fwrite(&agenda, 1, sizeof(agenda), file);
+
+    fclose(file);
+    file = fopen("agenda.dat", "rb");
+    fread(&agenda, 1, sizeof(agenda), file);
+    printf("Datos leídos desde el archivo:\n");
+    for (int i = 0; i < sizeof(agenda); i++) {
+        if(agenda.personas[i].edad != NULL){
+        printf("Edad: %d", agenda.personas[i].edad);
+    }}
+    fclose(file);
 }
 
 char *imprimeTipoContacto(enum tipoContacto tipo) {
